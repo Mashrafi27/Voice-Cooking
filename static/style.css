@@ -1,0 +1,536 @@
+/* ═══════════════════════════════════════════════════
+   Voice Kitchen — Dark, Kitchen-Friendly Stylesheet
+   ═══════════════════════════════════════════════════ */
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #1a1a1a;
+  --bg-card:      #242424;
+  --bg-elevated:  #2e2e2e;
+  --border:       #3a3a3a;
+  --text:         #f5f5f5;
+  --text-muted:   #999;
+  --accent:       #4caf50;
+  --accent-dark:  #388e3c;
+  --accent-glow:  rgba(76, 175, 80, 0.35);
+  --danger:       #ef5350;
+  --warning:      #ff9800;
+  --blue:         #42a5f5;
+  --radius:       12px;
+  --radius-lg:    20px;
+  --shadow:       0 4px 24px rgba(0,0,0,0.5);
+  --font:         -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:    'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --transition:   0.2s ease;
+}
+
+html { font-size: 18px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  /* Extra bottom padding so mic button never covers content */
+  padding-bottom: 180px;
+}
+
+/* ── App Header ── */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-logo { font-size: 1.6rem; line-height: 1; }
+
+.app-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+.status-dot.connected    { background: var(--accent); }
+.status-dot.disconnected { background: var(--danger); }
+
+/* ── Tab Bar ── */
+.tab-bar {
+  display: flex;
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  flex: 1;
+  min-width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: var(--font);
+  font-weight: 500;
+  border-bottom: 3px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.tab-icon  { font-size: 1.3rem; line-height: 1; }
+.tab-label { white-space: nowrap; }
+
+/* ── Main Content ── */
+.main-content {
+  flex: 1;
+  padding: 20px 16px 10px;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── Panels ── */
+.panel {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+.panel.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.panel-hint {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* ── Response Area ── */
+.response-area {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-height: 120px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  transition: border-color var(--transition);
+}
+.response-area.streaming { border-color: var(--accent); }
+
+.placeholder-text { color: var(--text-muted); font-style: italic; }
+
+/* Streaming cursor */
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: blink 0.9s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── Grocery Panel ── */
+.grocery-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.recipe-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color var(--transition);
+}
+.recipe-input:focus   { border-color: var(--accent); }
+.recipe-input::placeholder { color: var(--text-muted); }
+
+.generate-btn {
+  padding: 12px 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition), transform 0.1s;
+  font-family: var(--font);
+}
+.generate-btn:hover  { background: var(--accent-dark); }
+.generate-btn:active { transform: scale(0.97); }
+
+/* Grocery list styling (rendered from markdown-like output) */
+.grocery-list-area { font-size: 1rem; }
+
+.grocery-list-area ul {
+  list-style: none;
+  padding: 0;
+}
+.grocery-list-area ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+.grocery-list-area ul li:last-child { border-bottom: none; }
+.grocery-list-area ul li.checked {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+.grocery-list-area ul li input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.grocery-list-area h3,
+.grocery-list-area strong {
+  color: var(--accent);
+  font-size: 0.85rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin: 14px 0 6px;
+  display: block;
+}
+
+/* ── Cooking Panel ── */
+.cooking-header {
+  margin-bottom: 14px;
+}
+
+.recipe-badge {
+  display: inline-block;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.recipe-badge.has-recipe { color: var(--accent); border-color: var(--accent); }
+
+/* Step Display */
+.step-display {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  font-size: 1.55rem;
+  line-height: 1.5;
+  font-weight: 500;
+  min-height: 130px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color var(--transition);
+  margin-bottom: 18px;
+}
+.step-display.streaming { border-color: var(--accent); }
+
+/* Cooking Controls */
+.cooking-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.next-step-btn,
+.repeat-btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background var(--transition), transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.next-step-btn {
+  background: var(--accent);
+  color: #fff;
+}
+.next-step-btn:hover  { background: var(--accent-dark); }
+.next-step-btn:active { transform: scale(0.97); }
+
+.repeat-btn {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.repeat-btn:hover  { background: var(--border); }
+.repeat-btn:active { transform: scale(0.97); }
+
+/* ── Timer Widget ── */
+.timer-widget {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+}
+
+.timer-display {
+  font-family: var(--font-mono);
+  font-size: 3.2rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 16px;
+  transition: color var(--transition);
+}
+.timer-display.warning  { color: var(--warning); }
+.timer-display.done-blink {
+  animation: timerDone 0.6s ease infinite alternate;
+}
+@keyframes timerDone {
+  from { color: var(--danger); }
+  to   { color: var(--warning); }
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.timer-input {
+  width: 58px;
+  padding: 8px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 1rem;
+  font-family: var(--font-mono);
+  text-align: center;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.timer-input:focus { border-color: var(--accent); }
+
+.timer-label { color: var(--text-muted); font-size: 0.9rem; }
+
+.timer-btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+  transition: background var(--transition), transform 0.1s;
+}
+.timer-btn:hover  { background: var(--accent-dark); }
+.timer-btn:active { transform: scale(0.97); }
+.timer-btn-reset  { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border); }
+.timer-btn-reset:hover { background: var(--border); }
+
+.timer-status {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  min-height: 1.2em;
+}
+
+/* ── Mic Button ── */
+.mic-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 200;
+}
+
+.transcript-bubble {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  color: var(--text);
+  max-width: 280px;
+  text-align: center;
+  min-height: 28px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.transcript-bubble.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mic-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px var(--accent-glow), var(--shadow);
+  transition: background var(--transition), transform 0.15s, box-shadow var(--transition);
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+.mic-btn:hover  { background: var(--accent-dark); box-shadow: 0 6px 28px var(--accent-glow); }
+.mic-btn:active { transform: scale(0.93); }
+
+.mic-btn.listening {
+  background: var(--danger);
+  box-shadow: 0 4px 20px rgba(239,83,80,0.4), var(--shadow);
+}
+
+/* Pulse ring when listening */
+.mic-btn.listening::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 3px solid var(--danger);
+  animation: pulseRing 1.4s ease-out infinite;
+}
+.mic-btn.listening::after {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 2px solid var(--danger);
+  animation: pulseRing 1.4s ease-out 0.5s infinite;
+}
+
+@keyframes pulseRing {
+  0%   { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(1.35); }
+}
+
+.mic-btn.processing {
+  background: var(--warning);
+  box-shadow: 0 4px 20px rgba(255,152,0,0.4), var(--shadow);
+  animation: processingPulse 1s ease-in-out infinite;
+}
+@keyframes processingPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(0.95); }
+}
+
+.mic-icon { width: 32px; height: 32px; color: #fff; }
+
+.mic-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+/* ── Error Toast ── */
+.toast {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  background: var(--danger);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  max-width: 90vw;
+  text-align: center;
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: var(--shadow);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  html { font-size: 16px; }
+  .step-display { font-size: 1.3rem; padding: 20px 16px; }
+  .timer-display { font-size: 2.5rem; }
+  .grocery-input-row { flex-direction: column; }
+}
+
+@media (min-width: 680px) {
+  .main-content { padding: 28px 24px 10px; }
+  .step-display { font-size: 1.7rem; }
+}

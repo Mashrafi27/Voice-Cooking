@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Cooking Assistant</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Socket.IO client -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+  <!-- ── Header ── -->
+  <header class="app-header">
+    <span class="app-logo">&#127859;</span>
+    <h1 class="app-title">Voice Kitchen</h1>
+    <span class="status-dot" id="statusDot" title="Connecting..."></span>
+  </header>
+
+  <!-- ── Tab Bar ── -->
+  <nav class="tab-bar" role="tablist">
+    <button class="tab-btn active" data-mode="brainstorm" role="tab" aria-selected="true">
+      <span class="tab-icon">&#129300;</span>
+      <span class="tab-label">What to Cook</span>
+    </button>
+    <button class="tab-btn" data-mode="grocery" role="tab" aria-selected="false">
+      <span class="tab-icon">&#128722;</span>
+      <span class="tab-label">Grocery List</span>
+    </button>
+    <button class="tab-btn" data-mode="cooking" role="tab" aria-selected="false">
+      <span class="tab-icon">&#128293;</span>
+      <span class="tab-label">Let&#8217;s Cook</span>
+    </button>
+  </nav>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content">
+
+    <!-- ===== BRAINSTORM PANEL ===== -->
+    <section class="panel active" id="panel-brainstorm">
+      <p class="panel-hint">Tell me what&#8217;s in your fridge, your mood, or any craving &#8212; I&#8217;ll suggest what to make.</p>
+      <div class="response-area" id="response-brainstorm" aria-live="polite">
+        <span class="placeholder-text">Tap the mic and start talking&#8230;</span>
+      </div>
+    </section>
+
+    <!-- ===== GROCERY PANEL ===== -->
+    <section class="panel" id="panel-grocery">
+      <div class="grocery-input-row">
+        <input
+          type="text"
+          id="recipeInput"
+          class="recipe-input"
+          placeholder="Enter recipe name (e.g. Chicken Tikka Masala)"
+          autocomplete="off"
+        />
+        <button class="generate-btn" id="generateBtn">Generate List</button>
+      </div>
+      <p class="panel-hint">Or just say the recipe name into the mic.</p>
+      <div class="response-area grocery-list-area" id="response-grocery" aria-live="polite">
+        <span class="placeholder-text">Your grocery list will appear here&#8230;</span>
+      </div>
+    </section>
+
+    <!-- ===== COOKING PANEL ===== -->
+    <section class="panel" id="panel-cooking">
+      <div class="cooking-header">
+        <div class="recipe-badge" id="currentRecipeBadge">No recipe selected</div>
+      </div>
+
+      <!-- Current Step -->
+      <div class="step-display" id="stepDisplay" aria-live="assertive">
+        <span class="placeholder-text">Ask a question or say &#8220;next step&#8221;</span>
+      </div>
+
+      <!-- Controls Row -->
+      <div class="cooking-controls">
+        <button class="next-step-btn" id="nextStepBtn">&#9654; Next Step</button>
+        <button class="repeat-btn" id="repeatBtn">&#128263; Repeat</button>
+      </div>
+
+      <!-- Timer Widget -->
+      <div class="timer-widget">
+        <div class="timer-display" id="timerDisplay">00:00</div>
+        <div class="timer-controls">
+          <input type="number" id="timerMinutes" class="timer-input" min="0" max="99" value="5" />
+          <span class="timer-label">min</span>
+          <button class="timer-btn" id="timerStart">Start</button>
+          <button class="timer-btn timer-btn-reset" id="timerReset">Reset</button>
+        </div>
+        <div class="timer-status" id="timerStatus"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Mic Button ── -->
+  <div class="mic-container">
+    <div class="transcript-bubble" id="transcriptBubble"></div>
+    <button class="mic-btn" id="micBtn" aria-label="Start voice input">
+      <svg class="mic-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v6a2 2 0 0 0 4 0V5a2 2 0 0 0-2-2z"/>
+        <path d="M19 11a1 1 0 0 1 1 1 8 8 0 0 1-7 7.938V22h2a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2h2v-2.062A8 8 0 0 1 4 12a1 1 0 0 1 2 0 6 6 0 0 0 12 0 1 1 0 0 1 1-1z"/>
+      </svg>
+    </button>
+    <div class="mic-label" id="micLabel">Tap to speak</div>
+  </div>
+
+  <!-- ── Error Toast ── -->
+  <div class="toast" id="errorToast" role="alert" aria-live="assertive"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
